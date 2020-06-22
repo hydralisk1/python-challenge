@@ -67,8 +67,7 @@ def put_data(l, file_write = False, filename = "analysis/file_write.txt"):
 
         # to make sure there's no directory having same name
         try:
-            os.makedirs(os.path.join(path, "..", folder))
-        # if same directory exists or other OS errors occur, don't make it
+            os.makedirs(os.path.join(path, "..", folder)
         except OSError:
             pass
         
