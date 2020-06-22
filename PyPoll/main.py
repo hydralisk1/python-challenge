@@ -1,9 +1,11 @@
 import csv
 import os
 
+# Function to get total number of votes
 def get_tot_votes(l):
     return len(l)
 
+# Function to read csv file
 def get_csv_data(filename, header = False):
     path = os.path.dirname(__file__)
     data = []
@@ -14,20 +16,29 @@ def get_csv_data(filename, header = False):
         for row in csv_reader:
             data.append(row[2])
 
+    # check if header is needed. Default: False
     if(header):
         return data
     else:
         return data[1:]
 
+# Function to get result
 def get_result(l):
+    # remove duplicates
     names = list(set(l))
+    ''' return list
+    [candidate, number of votes for candidate]
+    '''
     return [[names[i], l.count(names[i])] for i in range(len(names))]
 
+# Function to print result
 def put_data(l, file_write = False, filename = "analysis/file_write.txt"):
     result = []
 
     tot_votes = get_tot_votes(l)
     election_result = get_result(l)
+    
+    # descending sort by number of votes
     election_result.sort(key=lambda x:x[1], reverse=True)
 
     result.append("Election Results")
@@ -46,15 +57,20 @@ def put_data(l, file_write = False, filename = "analysis/file_write.txt"):
     for line in result:
         print(line)
     
+    # check if writing into file is needed. Default: False
     if(file_write):
         path = os.path.dirname(__file__)
-        folder = "/".join(filename.split("/")[:-1])
-
+        # to get directory name that user wants
+        folder = filename.rsplit("/", 1)[0]
+        
+        # try to make a directory
         try:
             os.makedirs(os.path.join(path, folder))
+        # if same directory exists or other OS errors occur, don't make it
         except OSError:
             pass
-
+        
+        # writing into file
         with open(os.path.join(path, filename), mode = "w+") as txt_file:
             for line in result:
                 txt_file.write(line+"\n")

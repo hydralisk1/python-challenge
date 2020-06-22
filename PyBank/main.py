@@ -1,19 +1,32 @@
 import csv
 import os
 
+# Function to get total number of months
 def get_tot_month(l):
     return len(l)
 
+# Function to get total
 def get_total(l):
     return sum(int(i[1]) for i in l)
 
+# Function to get average of change
 def get_avg_change(l):
+    # (very last profit - very first profit) / (total number of profits - 1), rounded 2 decimal places
     return round((int(l[-1][1]) - int(l[0][1]))/(len(l) - 1), 2)
 
+# Function to get greatest increase and decrease
 def get_great_change(l):
     diff = [int(l[i][1]) - int(l[i-1][1]) for i in range(1, len(l))]
+    ''' return 2 x 2 list
+                    [0]                      [1]
+        ┌──────────────────────────┬─────────────────────┐
+     [0]│month of greatest increase│  greatest increase  │
+        ├──────────────────────────┼─────────────────────┤
+     [1]│month of greatese decrease│  greatest decrease  │
+        └──────────────────────────┴─────────────────────┘'''
     return [[l[diff.index(max(diff))+1][0], max(diff)], [l[diff.index(min(diff))+1][0], min(diff)]]
 
+# Function to read csv file
 def get_csv_data(filename, header = False):
     path = os.path.dirname(__file__)
     data = []
@@ -24,11 +37,13 @@ def get_csv_data(filename, header = False):
         for row in csv_reader:
             data.append(row)
 
+    # check if header is needed. Default: False
     if(header):
         return data
     else:
         return data[1:]
 
+# Function to print result
 def put_data(l, file_write = False, filename = "analysis/file_write.txt"):
     great_change = get_great_change(l)
     result = []
@@ -44,15 +59,20 @@ def put_data(l, file_write = False, filename = "analysis/file_write.txt"):
     for line in result:
         print(line)
     
+    # check if writing into file is needed. Default: False
     if(file_write):
         path = os.path.dirname(__file__)
-        folder = "/".join(filename.split("/")[:-1])
+        # to get directory name that user wants
+        folder = filename.rsplit("/", 1)[0]
 
+        # try to make a directory
         try:
-            os.makedirs(os.path.join(path, folder))
+            os.makedirs(os.path.join(path, "..", folder))
+        # if same directory exists or other OS errors occur, don't make it
         except OSError:
             pass
-
+        
+        # writing into file
         with open(os.path.join(path, filename), mode = "w+") as txt_file:
             for line in result:
                 txt_file.write(line+"\n")
