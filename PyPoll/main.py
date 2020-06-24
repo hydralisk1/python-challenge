@@ -10,7 +10,7 @@ def get_csv_data(filename, header = False):
         csv_reader = csv.reader(csv_file, delimiter=",")
     
         for row in csv_reader:
-            data.append(row[2])
+            data.append(row)
 
     # check if header is needed. Default: False
     if(header):
@@ -19,19 +19,24 @@ def get_csv_data(filename, header = False):
         return data[1:]
 
 # Function to get result
-def get_result(l):
+def get_result(l, header = False):
+    l = [i[2] for i in l]
+
     # remove duplicates
-    names = list(set(l))
+    if header:
+        names = list(set(l[1:]))
+    else:
+        names = list(set(l))
     ''' return list
     [[candidate, number of votes for candidate]]
     '''
     return [[names[i], l.count(names[i])] for i in range(len(names))]
 
 # Function to print result
-def put_data(l, file_write = False, filename = "analysis/file_write.txt"):
+def put_data(l, file_write = False, header = False, filename = "analysis/file_write.txt"):
     result = []
 
-    election_result = get_result(l)
+    election_result = get_result(l, header)
     tot_votes = sum([i[1] for i in election_result])
     
     # descending sort by number of votes
@@ -49,6 +54,8 @@ def put_data(l, file_write = False, filename = "analysis/file_write.txt"):
     result.append("-------------------------")
     result.append(f"Winner: {election_result[0][0]}")
     result.append("-------------------------")
+    if header:
+        result.append(f"Header: {l[0]}")
     
     for line in result:
         print(line)
@@ -71,5 +78,7 @@ def put_data(l, file_write = False, filename = "analysis/file_write.txt"):
                 txt_file.write(line+"\n")
 
 rel_path = "Resources/election_data.csv"
-data = get_csv_data(rel_path)
-put_data(data, True)
+# If header is needed, header = True
+header = False
+data = get_csv_data(rel_path, header)
+put_data(data, True, header)

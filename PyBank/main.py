@@ -2,21 +2,27 @@ import csv
 import os
 
 # Function to get total number of months
-def get_tot_month(l):
-    return len(l)
+def get_tot_month(l, header = False):
+    return len(l[1:] if header else l)
 
 # Function to get total
-def get_total(l):
-    return sum(int(i[1]) for i in l)
+def get_total(l, header = False):
+    return sum(int(i[1]) for i in l[1:]) if header else sum(int(i[1]) for i in l)
 
 # Function to get average of change
-def get_avg_change(l):
+def get_avg_change(l, header = False):
+    if header:
+        l = l[1:]
+    
     # (very last profit - very first profit) / (total number of profits - 1), rounded 2 decimal places
-    return round((int(l[-1][1]) - int(l[0][1]))/(len(l) - 1), 2)
+    return round((int(l[-1][1]) - int(l[0][1]))/(get_tot_month(l) - 1), 2)
 
 # Function to get greatest increase and decrease
-def get_great_change(l):
-    diff = [int(l[i][1]) - int(l[i-1][1]) for i in range(1, len(l))]
+def get_great_change(l, header = False):
+    if header:
+        l = l[1:]
+
+    diff = [int(l[i][1]) - int(l[i-1][1]) for i in range(1, get_tot_month(l))]
     ''' return 2 x 2 list
                     [0]                      [1]
         ┌──────────────────────────┬─────────────────────┐
@@ -38,23 +44,22 @@ def get_csv_data(filename, header = False):
             data.append(row)
 
     # check if header is needed. Default: False
-    if(header):
-        return data
-    else:
-        return data[1:]
+    return data if header else data[1:]
 
 # Function to print result
-def put_data(l, file_write = False, filename = "analysis/file_write.txt"):
-    great_change = get_great_change(l)
+def put_data(l, file_write = False, header = False, filename = "analysis/file_write.txt"):
+    great_change = get_great_change(l, header)
     result = []
 
     result.append("Financial Analysis")
     result.append("----------------------------------------------------")
-    result.append(f"Total Months: {get_tot_month(l)}")
-    result.append(f"Total: ${get_total(l)}")
-    result.append(f"Average Change: ${get_avg_change(l)}")
+    result.append(f"Total Months: {get_tot_month(l, header)}")
+    result.append(f"Total: ${get_total(l, header)}")
+    result.append(f"Average Change: ${get_avg_change(l, header)}")
     result.append(f"Greatest Increase in Profits: {great_change[0][0]} (${great_change[0][1]})")
     result.append(f"Greatest Decrease in Profits: {great_change[1][0]} (${great_change[1][1]})")
+    if header:
+        result.append(f"Header: {l[0]}")
 
     for line in result:
         print(line)
@@ -77,5 +82,7 @@ def put_data(l, file_write = False, filename = "analysis/file_write.txt"):
                 txt_file.write(line+"\n")
 
 rel_path = "Resources/budget_data.csv"
-data = get_csv_data(rel_path)
-put_data(data, True)
+# If header is needed, header = True
+header = False
+data = get_csv_data(rel_path, header)
+put_data(data, True, header)
