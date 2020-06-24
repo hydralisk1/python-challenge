@@ -1,10 +1,6 @@
 import csv
 import os
 
-# Function to get total number of votes
-def get_tot_votes(l):
-    return len(l)
-
 # Function to read csv file
 def get_csv_data(filename, header = False):
     path = os.path.dirname(__file__)
@@ -27,7 +23,7 @@ def get_result(l):
     # remove duplicates
     names = list(set(l))
     ''' return list
-    [candidate, number of votes for candidate]
+    [[candidate, number of votes for candidate]]
     '''
     return [[names[i], l.count(names[i])] for i in range(len(names))]
 
@@ -35,8 +31,8 @@ def get_result(l):
 def put_data(l, file_write = False, filename = "analysis/file_write.txt"):
     result = []
 
-    tot_votes = get_tot_votes(l)
     election_result = get_result(l)
+    tot_votes = sum([i[1] for i in election_result])
     
     # descending sort by number of votes
     election_result.sort(key=lambda x:x[1], reverse=True)
