@@ -43,7 +43,7 @@ def get_csv_data(filename, header = False):
 
     return data
 
-# Function to print result
+# Function to print out result
 def put_data(l, file_write = False, filename = "analysis/file_write.txt"):
     great_change = get_great_change(l)
     result = []
