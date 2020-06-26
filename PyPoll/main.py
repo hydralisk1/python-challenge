@@ -29,7 +29,7 @@ def get_result(l):
     '''
     return [[names[i], l.count(names[i])] for i in range(len(names))]
 
-# Function to print result
+# Function to print out result
 def put_data(l, file_write = False, filename = "analysis/file_write.txt"):
     result = []
 
