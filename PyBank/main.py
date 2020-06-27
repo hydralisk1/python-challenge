@@ -63,7 +63,7 @@ def put_data(l, file_write = False, filename = "analysis/file_write.txt"):
     if(file_write):
         path = os.path.dirname(__file__)
         # to get directory name that user wants
-        folder = filename.rsplit("/", 1)[0]
+        folder = os.path.dirname(filename)
 
         # to make sure there's no directory having same name
         try:
